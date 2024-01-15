@@ -38,7 +38,7 @@ const Header = () => {
               </Link>
             </div>
           ) : (
-            <div className="flex items-center">
+            <div className="hidden md:block flex items-center">
               <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
                 {userInfo && userInfo?.name}
               </button>
