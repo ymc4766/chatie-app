@@ -57,7 +57,7 @@ router.post("/", (req, res) => {
         folder: "NWS-app",
         resource_type: "image",
       });
-
+      console.log("Uploaded File:", uploadedFile);
       // Remove the locally stored file after successful upload to Cloudinary
       await fs.unlink(req.file.path);
 

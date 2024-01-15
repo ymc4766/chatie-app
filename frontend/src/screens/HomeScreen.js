@@ -104,7 +104,7 @@ function Home({ socket }) {
             <div>
               <h1 className="text-2xl font-bold mb-4">Trending Posts</h1>
               <div className="overflow-y-auto max-h-screen trending-posts-scroll scrollbar">
-                {posts.map((post, index) => (
+                {posts?.map((post, index) => (
                   <div key={index} className="flex flex-col py-2">
                     <h3 className="font-bold text-[16px] text-blue-700 underline">
                       {post.title}
