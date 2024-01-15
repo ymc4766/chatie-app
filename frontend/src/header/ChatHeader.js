@@ -12,7 +12,7 @@ const ChatHeader = () => {
     <div className=" h-[50px] dark:bg-dark_bg_2 flex items-center p16 px-3 m-3">
       {/* container */}
       <div className="w-full flex items-center justify-between">
-        <div>
+        <div className="flex items-center space-x-3">
           <button className="btn">
             <img
               src={
@@ -24,7 +24,7 @@ const ChatHeader = () => {
               className="w-8 h-8 rounded-full object-cover"
             />
           </button>
-          <p>{userInfo?.name}</p>
+          <p className="text-slate-300 uppercase">{userInfo?.name}</p>
         </div>
 
         <ul className="flex items-center gap-x-2 5">

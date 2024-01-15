@@ -30,19 +30,19 @@ function FriendsModal({ onClose, socket }) {
   };
   useEffect(() => {
     if (userInfo) {
-      dispatch(getConversations(userInfo.token));
+      dispatch(getConversations(userInfo?.token));
     }
-  }, [dispatch, userInfo]);
+  }, [dispatch, userInfo, conversations]);
 
   return (
     <>
       <div
-        className=" fixed inset-0 bg-black opacity-30"
+        className=" fixed inset-0 bg-black opacity-30 "
         onClick={onClose}
       ></div>
       <div
         className="fixed bottom-0  right-4 p-0 mb-4 bg-white border border-gray-300 shadow-md
-       w-full md:w-1/3 h-[80%] overflow-y-auto dark:bg-dark_bg_1  "
+       w-[90%] md:w-1/3 h-[80%] overflow-y-auto dark:bg-dark_bg_1 sm:px-4  "
       >
         {/* <button
           className="absolute top-1 right-2  text-lg font-bold mb-2 "

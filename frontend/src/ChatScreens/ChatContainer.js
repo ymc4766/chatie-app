@@ -22,14 +22,13 @@ function ChatContainer({ onClose, socket }) {
     }
   }, [dispatch, activeConversation]);
 
-  // useEffect(() => {
-  //   socket.on("messageRecieve", (message) => {
-  //     console.log("message recice ---- -->", message);
-  //     dispatch(updateMessages(message));
-  //     dispatch(getConversationMessage(values));
-  //   });
-
-  // }, [dispatch]);
+  useEffect(() => {
+    socket.on("messageRecieve", (message) => {
+      // console.log("message recice ---- -->", message);
+      dispatch(updateMessages(message));
+      dispatch(getConversationMessage(values));
+    });
+  }, [dispatch]);
 
   return (
     <div className="relative w-full h-full border-l dark:border-l-dark_border_2 select-none overflow-hidden ">

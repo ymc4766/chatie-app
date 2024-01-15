@@ -46,10 +46,6 @@ function Home({ socket }) {
     dispatch(disLikePost(postId));
   };
 
-  const values = {
-    token: userInfo?.token,
-    convo_id: activeConversation?._id,
-  };
   useEffect(() => {
     socket.emit("join", userInfo?._id);
   }, [userInfo]);
@@ -57,14 +53,6 @@ function Home({ socket }) {
   useEffect(() => {
     dispatch(getPosts());
   }, [dispatch, likes, disLikes]);
-
-  useEffect(() => {
-    socket.on("messageRecieve", (message) => {
-      // console.log("message recice ---- -->", message);
-      dispatch(updateMessages(message));
-      dispatch(getConversationMessage(values));
-    });
-  }, [dispatch]);
 
   if (isLoading) {
     return <Loader />;

@@ -16,10 +16,10 @@ export default function (socket) {
 
   socket.on("sendMsg", (message) => {
     // console.log("new msg ---", message);
-    let conversation = message.conversation;
+    let conversation = message?.conversation;
     if (!conversation.users) return;
     conversation.users.forEach((user) => {
-      if (user._id === message.sender._id) return;
+      if (user._id === message?.sender?._id) return;
       socket.in(user._id).emit("messageRecieve", message);
     });
   });
