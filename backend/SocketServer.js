@@ -1,9 +1,26 @@
-export default function (socket) {
+let onlineUsers = [];
+export default function (socket, io) {
   // user joins or opens app
 
   socket.on("join", (user) => {
     // console.log("user joined -", user);
     socket.join(user);
+
+    if (!onlineUsers.some((u) => u.userId === user)) {
+      onlineUsers.push({ userId: user, socketId: socket.id });
+      // console.log(`user ${user} is now Online`);
+    }
+
+    // send online users frontend
+    io.emit("get-online-users", onlineUsers);
+  });
+
+  //socket ofline - user
+
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+    io.emit("get-online-users", onlineUsers);
+    // console.log(`user has went offline `);
   });
 
   // join convo Room
@@ -22,5 +39,18 @@ export default function (socket) {
       if (user._id === message?.sender?._id) return;
       socket.in(user._id).emit("messageRecieve", message);
     });
+  });
+
+  // typing
+
+  socket.on("typing", (conversation) => {
+    // console.log("typing", conversation);
+    socket.in(conversation).emit("typing");
+  });
+
+  // stop typing
+
+  socket.on("stop typing", (conversation) => {
+    socket.in(conversation).emit("stop typing");
   });
 }

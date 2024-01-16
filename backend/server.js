@@ -106,7 +106,7 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   logger.info("socket io connected succesfuly ...");
-  SocketServer(socket);
+  SocketServer(socket, io);
 });
 
 //Handle Unhandled Promise rejections

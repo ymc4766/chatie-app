@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import Messages from "./Messages";
 import { useSelector } from "react-redux";
-
-const ChatMessages = () => {
+import { BsThreeDots } from "react-icons/bs";
+const ChatMessages = ({ typing }) => {
   const { messages } = useSelector((state) => state.chat);
   const { userInfo } = useSelector((state) => state.auth);
 
   const endMsg = useRef();
+  const typingIconRef = useRef();
+
   const scrollBtm = () => {
     endMsg.current.scrollIntoView({ bahavior: "smooth" });
   };
@@ -23,6 +25,15 @@ const ChatMessages = () => {
     scrollBtm();
   }, [messages]);
 
+  useEffect(() => {
+    // Add bounce animation to the icon
+    if (typing && typingIconRef.current) {
+      typingIconRef.current.classList.add("bounce");
+    } else {
+      typingIconRef.current?.classList.remove("bounce");
+    }
+  }, [typing]);
+
   return (
     <div
       className="mb-[60px] 
@@ -37,8 +48,20 @@ const ChatMessages = () => {
               message={message}
               key={message._id}
               me={userInfo._id === message.sender._id}
+              // typing={typing}
             />
           ))}
+        <div className="mb-4">
+          {typing ? (
+            <BsThreeDots
+              size={24}
+              ref={typingIconRef}
+              className="typing-icon"
+            />
+          ) : (
+            ""
+          )}
+        </div>
         <div className="mt-2" ref={endMsg}></div>
       </div>
     </div>

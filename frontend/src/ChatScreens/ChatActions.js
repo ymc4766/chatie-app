@@ -35,7 +35,7 @@ function ChatActions({ socket }) {
     socket.emit("sendMsg", newMsg?.payload);
     // dispatch(updateMessages(newMsg.payload));
 
-    console.log("nwMsg", newMsg);
+    // console.log("nwMsg", newMsg);
 
     setMessage("");
     setLoading(false);

@@ -1,5 +1,7 @@
 import moment from "moment";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { FaDotCircle } from "react-icons/fa";
+import { GoDotFill } from "react-icons/go";
 import { dateHandler } from "../utils/dateHandler";
 import { useDispatch, useSelector } from "react-redux";
 import { open_create_conversations } from "../redux/chatSlice";
@@ -11,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import SocketContext from "../Context/SocketContext";
 
-function Conversation({ convo, setIsChatScreenVisible, socket }) {
+function Conversation({ convo, setIsChatScreenVisible, socket, online }) {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -39,7 +41,10 @@ function Conversation({ convo, setIsChatScreenVisible, socket }) {
         <div className="flex items-center gap-x-3  ">
           {/* conversation user pic  */}
 
-          <div className="relative  min-w-[50px] max-w-[50px] h-[50px]  rounded-full overflow-hidden">
+          <div
+            className={`relative  min-w-[50px] max-w-[50px] h-[50px]  rounded-full
+           overflow-hidden`}
+          >
             <img
               src={
                 convo.picture
@@ -53,9 +58,15 @@ function Conversation({ convo, setIsChatScreenVisible, socket }) {
           {/* conversation name and pic / */}
           <div className="w-full flex  flex-col">
             {/* conversation name ..  */}
-            <h1 className="font-bold  flex items-center  gap-x-2 text-slate-400">
-              {getConversationName(userInfo, convo.users)}
-            </h1>
+            <div className="flex items-center">
+              <h1 className="font-bold  flex items-center  gap-x-2 text-slate-400">
+                {getConversationName(userInfo, convo.users)}
+              </h1>
+              <p className="text-slate-200 space-x-1">
+                {online ? <GoDotFill className="text-green-700" /> : ""}
+              </p>
+            </div>
+
             {/* conversation message */}
             <div className="">
               <div className="flex items-center  gap-x-1  dark:text-slate-100">

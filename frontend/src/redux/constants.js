@@ -1,7 +1,7 @@
-export const BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? process.env.REACT_APP_BACKEND_API
-    : "";
+export const BASE_URL = "";
+//   process.env.NODE_ENV === "development"
+//     ? process.env.REACT_APP_BACKEND_API
+//     : "";
 
 export const POSTS_URL = `/api/posts`;
 

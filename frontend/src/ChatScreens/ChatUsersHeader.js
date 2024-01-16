@@ -3,17 +3,29 @@ import { useSelector } from "react-redux";
 import DotsIcon from "../svg/Dots";
 import SearchLargeIcon from "../svg/SearchLarge";
 import { RiArrowGoBackLine } from "react-icons/ri";
-import { getConversationName } from "../utils/chatWithUser";
+import {
+  checkUserOnline,
+  getConversationName,
+  getConversationPicture,
+} from "../utils/chatWithUser";
 
 // import { VideoCallIcon } from "../../svg";
 
-const ChatUserHeader = ({ onClose }) => {
+const ChatUserHeader = ({ onClose, onlineUsers }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const { activeConversation } = useSelector((state) => state.chat);
   const { name, picture } = activeConversation;
 
   // useEffect(() => {}, [activeConversation, name, picture]);
+  let isUserOnline = checkUserOnline(
+    onlineUsers,
+    userInfo,
+    activeConversation?.users
+  );
+  useEffect(() => {
+    // Use the checkUserOnline function to check if the user is online
+  }, [userInfo, activeConversation, onlineUsers]);
 
   return (
     <div className="sticky top-0 z-40 h-[59px] dark:bg-dark_bg_2 flex items-center p16 select-none">
@@ -26,7 +38,7 @@ const ChatUserHeader = ({ onClose }) => {
             <img
               src={
                 picture
-                  ? picture
+                  ? getConversationPicture(userInfo, activeConversation?.users)
                   : "https://cdn-icons-png.flaticon.com/512/147/147142.png"
               }
               alt="/"
@@ -38,7 +50,9 @@ const ChatUserHeader = ({ onClose }) => {
             <h1 className="dark:text-white text-md font-bold">
               {getConversationName(userInfo, activeConversation?.users)}
             </h1>
-            <span className="text-sm dark:text-dark_svg_1">online</span>
+            <span className="text-sm dark:text-dark_svg_1">
+              {isUserOnline ? "Online" : ""}
+            </span>
           </div>
         </div>
         {/*Right*/}

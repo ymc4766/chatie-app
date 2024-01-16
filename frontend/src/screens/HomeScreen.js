@@ -15,6 +15,8 @@ function Home({ socket }) {
 
   const [topPosts, setTopPosts] = useState([]);
   const [fetchPosts, setFetchPosts] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+
   const { activeConversation } = useSelector((state) => state.chat);
 
   const { userInfo } = useSelector((state) => state.auth);
@@ -48,6 +50,10 @@ function Home({ socket }) {
 
   useEffect(() => {
     socket.emit("join", userInfo?._id);
+    socket.on("get-online-users", (users) => {
+      setOnlineUsers(users);
+      console.log("online users", users);
+    });
   }, [userInfo]);
 
   useEffect(() => {

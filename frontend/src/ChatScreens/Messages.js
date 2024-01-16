@@ -2,10 +2,10 @@ import moment from "moment";
 import React from "react";
 import TraingleIcon from "../svg/TriangeIcon";
 
-const Messages = ({ message, me }) => {
+const Messages = ({ message, me, typing }) => {
   return (
     <div
-      className={`w-full flex mt-2 space-x-3 max-w-xs ${
+      className={`w-[100%] flex mt-2 space-x-3 max-w-xs ${
         me ? "ml-auto justify-end " : ""
       }`}
     >
@@ -26,6 +26,7 @@ const Messages = ({ message, me }) => {
         <span className="absolute right-1.5 bottom-1.5 text-xs text-dark_text_5 leading-none">
           {moment(message.createdAt).format("HH:mm:ss")}
         </span>
+        {/* <span>{typing ? "typing" : ""}</span> */}
         {!me && (
           <TraingleIcon
             className="dark:fill-dark_bg_2 rotate-[60deg] absolute

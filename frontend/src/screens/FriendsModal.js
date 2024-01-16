@@ -15,6 +15,7 @@ function FriendsModal({ onClose, socket }) {
   // You can fetch the list of friends and their details here
   const [searchResults, setSearchResults] = useState([]);
   const [isChatScreenVisible, setIsChatScreenVisible] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]); // State to store online users
 
   const navigate = useNavigate();
   const { conversations, activeConversation } = useSelector(
@@ -32,6 +33,11 @@ function FriendsModal({ onClose, socket }) {
     if (userInfo) {
       dispatch(getConversations(userInfo?.token));
     }
+
+    socket.on("get-online-users", (users) => {
+      setOnlineUsers(users);
+      console.log("online users", users);
+    });
   }, [dispatch, userInfo, conversations]);
 
   return (
@@ -52,7 +58,10 @@ function FriendsModal({ onClose, socket }) {
         </button> */}
         <div className="mt-1">
           {isChatScreenVisible && activeConversation._id ? (
-            <ChatScreen onClose={handleCloseChatScreen} />
+            <ChatScreen
+              onClose={handleCloseChatScreen}
+              onlineUsers={onlineUsers}
+            />
           ) : (
             <>
               <ChatHeader />
