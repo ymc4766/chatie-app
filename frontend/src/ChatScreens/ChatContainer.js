@@ -18,12 +18,6 @@ function ChatContainer({ onClose, socket, onlineUsers }) {
   };
 
   useEffect(() => {
-    if (activeConversation._id) {
-      dispatch(getConversationMessage(values));
-    }
-  }, [dispatch, activeConversation]);
-
-  useEffect(() => {
     // listening recieving msg
     socket.on("messageRecieve", (message) => {
       // console.log("message recice ---- -->", message);
@@ -36,6 +30,12 @@ function ChatContainer({ onClose, socket, onlineUsers }) {
     socket.on("typing", () => setTyping(true));
     socket.on("stop typing", () => setTyping(false));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (activeConversation?._id) {
+      dispatch(getConversationMessage(values));
+    }
+  }, [activeConversation]);
 
   return (
     <div className="relative w-full  h-screen border-l dark:border-l-dark_border_2 select-none overflow-hidden ">

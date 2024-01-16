@@ -36,7 +36,7 @@ function FriendsModal({ onClose, socket }) {
 
     socket.on("get-online-users", (users) => {
       setOnlineUsers(users);
-      console.log("online users", users);
+      // console.log("online users", users);
     });
   }, [dispatch, userInfo, conversations]);
 
