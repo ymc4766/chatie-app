@@ -19,6 +19,11 @@ function Conversations({ setIsChatScreenVisible, socket, typing }) {
       // console.log("online users", users);
     });
   }, [userInfo]);
+
+  // useEffect(() => {
+  //   socket.on("typing", (conversation) => setTyping(conversation));
+  //   socket.on("stop typing", () => setTyping(false));
+  // }, []);
   return (
     <div className="convos scrollbar">
       <ul>

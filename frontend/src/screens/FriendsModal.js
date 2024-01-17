@@ -44,7 +44,7 @@ function FriendsModal({ onClose, socket }) {
 
     socket.on("typing", (conversation) => setTyping(conversation));
     socket.on("stop typing", () => setTyping(false));
-  }, [dispatch, userInfo, conversations]);
+  }, [dispatch, userInfo, conversations, typing]);
 
   return (
     <>
