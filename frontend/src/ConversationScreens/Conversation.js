@@ -4,7 +4,11 @@ import { FaDotCircle } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { dateHandler } from "../utils/dateHandler";
 import { useDispatch, useSelector } from "react-redux";
-import { open_create_conversations } from "../redux/chatSlice";
+import {
+  getConversationMessage,
+  open_create_conversations,
+  updateMessages,
+} from "../redux/chatSlice";
 import {
   getConversationId,
   getConversationName,
@@ -12,8 +16,15 @@ import {
 } from "../utils/chatWithUser";
 import { useNavigate } from "react-router-dom";
 import SocketContext from "../Context/SocketContext";
+import Typing from "../ChatScreens/inputActions/Typing";
 
-function Conversation({ convo, setIsChatScreenVisible, socket, online }) {
+function Conversation({
+  convo,
+  setIsChatScreenVisible,
+  socket,
+  online,
+  typing,
+}) {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
 
@@ -24,6 +35,15 @@ function Conversation({ convo, setIsChatScreenVisible, socket, online }) {
     receiver_id: getConversationId(userInfo, convo.users),
     token,
   };
+  // useEffect(() => {
+  //   // Join the conversation room when the component mounts
+  //   if (activeConversation?._id) {
+  //     socket.emit("joinConvoRoom", activeConversation?._id);
+  //     dispatch(getConversationMessage(values));
+  //   }
+
+  //   // Clean up the room on component unmount
+  // }, [activeConversation, socket]);
 
   const openConversation = async () => {
     let newConvo = await dispatch(open_create_conversations(values));
@@ -34,7 +54,7 @@ function Conversation({ convo, setIsChatScreenVisible, socket, online }) {
   return (
     <li
       onClick={() => openConversation()}
-      className="list-none h-[72px] w-full dark:bg-dark_bg_1 hover:dark:bg-dark_bg_2 px-[10px]"
+      className="list-none h-[72px] w-full dark:bg-dark_bg_1  cursor-pointer hover:dark:bg-dark_bg_2 px-[10px]"
     >
       <div className="relative w-full flex items-center justify-between  py-[10px]">
         {/* left  */}
@@ -71,11 +91,15 @@ function Conversation({ convo, setIsChatScreenVisible, socket, online }) {
             <div className="">
               <div className="flex items-center  gap-x-1  dark:text-slate-100">
                 <div className="flex-1 items-center gap-x-1  dark:text-slate-500">
-                  <p>
-                    {convo.latestMessage?.message.length > 25
-                      ? `${convo.latestMessage?.message.substring(0, 25)}...`
-                      : convo.latestMessage?.message}
-                  </p>
+                  {typing === convo._id ? (
+                    <Typing />
+                  ) : (
+                    <p>
+                      {convo.latestMessage?.message.length > 25
+                        ? `${convo.latestMessage?.message.substring(0, 25)}...`
+                        : convo.latestMessage?.message}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 // FriendsModal.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getConversations } from "../redux/chatSlice";
+import { getConversationMessage, getConversations } from "../redux/chatSlice";
 import Conversations from "../ConversationScreens/Conversations";
 import CloseIcon from "../svg/Close";
 import ChatHeader from "../header/ChatHeader";
@@ -10,13 +10,15 @@ import Search from "../Search/Search";
 import ChatScreen from "../ChatScreens/ChatScreen";
 import { Outlet, useNavigate } from "react-router-dom";
 import SocketContext from "../Context/SocketContext";
+import { getConversationId } from "../utils/chatWithUser";
 
 function FriendsModal({ onClose, socket }) {
   // You can fetch the list of friends and their details here
+  const [typing, setTyping] = useState(false);
+
   const [searchResults, setSearchResults] = useState([]);
   const [isChatScreenVisible, setIsChatScreenVisible] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]); // State to store online users
-
   const navigate = useNavigate();
   const { conversations, activeConversation } = useSelector(
     (state) => state.chat
@@ -29,6 +31,7 @@ function FriendsModal({ onClose, socket }) {
     setIsChatScreenVisible(false);
     // Additional logic you may want to perform when closing the chat screen
   };
+
   useEffect(() => {
     if (userInfo) {
       dispatch(getConversations(userInfo?.token));
@@ -38,6 +41,9 @@ function FriendsModal({ onClose, socket }) {
       setOnlineUsers(users);
       // console.log("online users", users);
     });
+
+    socket.on("typing", (conversation) => setTyping(conversation));
+    socket.on("stop typing", () => setTyping(false));
   }, [dispatch, userInfo, conversations]);
 
   return (
@@ -61,6 +67,7 @@ function FriendsModal({ onClose, socket }) {
             <ChatScreen
               onClose={handleCloseChatScreen}
               onlineUsers={onlineUsers}
+              typing={typing}
             />
           ) : (
             <>
@@ -75,12 +82,14 @@ function FriendsModal({ onClose, socket }) {
                     searchResults={searchResults}
                     setSearchResults={setSearchResults}
                     setIsChatScreenVisible={setIsChatScreenVisible}
+                    typing={typing}
                   />
                 ) : (
                   <>
                     {/* conversation */}
                     <Conversations
                       setIsChatScreenVisible={setIsChatScreenVisible}
+                      typing={typing}
                     />
                   </>
                 )}

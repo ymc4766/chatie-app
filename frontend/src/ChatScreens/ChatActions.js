@@ -9,7 +9,7 @@ import EmojiPickers from "./inputActions/EmojiPickers";
 import SocketContext from "../Context/SocketContext";
 // import EmojiPickers from "./inputActions/EmojiPicker";
 
-function ChatActions({ socket }) {
+function ChatActions({ socket, typing }) {
   const [message, setMessage] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [showAttachment, setShowAttachment] = useState(false);

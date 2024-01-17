@@ -4,7 +4,7 @@ import Conversation from "./Conversation";
 import SocketContext from "../Context/SocketContext";
 import { getConversationId } from "../utils/chatWithUser";
 
-function Conversations({ setIsChatScreenVisible, socket }) {
+function Conversations({ setIsChatScreenVisible, socket, typing }) {
   const [onlineUsers, setOnlineUsers] = useState([]);
 
   const { conversations, activeConversation } = useSelector(
@@ -16,7 +16,7 @@ function Conversations({ setIsChatScreenVisible, socket }) {
     socket.emit("join", userInfo?._id);
     socket.on("get-online-users", (users) => {
       setOnlineUsers(users);
-      console.log("online users", users);
+      // console.log("online users", users);
     });
   }, [userInfo]);
   return (
@@ -36,6 +36,7 @@ function Conversations({ setIsChatScreenVisible, socket }) {
                   key={convo._id}
                   setIsChatScreenVisible={setIsChatScreenVisible}
                   online={isUserOnline}
+                  typing={typing}
                 />
               );
             })}

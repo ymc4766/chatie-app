@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getConversations, updateMessages } from "../redux/chatSlice";
 import SocketContext from "../Context/SocketContext";
 
-function ChatScreen({ onClose, socket, onlineUsers }) {
+function ChatScreen({ onClose, socket, onlineUsers, typing }) {
   const { userInfo } = useSelector((state) => state.auth);
   const { activeConversation, messages } = useSelector((state) => state.chat);
 
@@ -28,7 +28,11 @@ function ChatScreen({ onClose, socket, onlineUsers }) {
 
   return (
     <div className=" text-slate-100">
-      <ChatContainer onClose={onClose} onlineUsers={onlineUsers} />
+      <ChatContainer
+        onClose={onClose}
+        onlineUsers={onlineUsers}
+        typing={typing}
+      />
     </div>
   );
 }

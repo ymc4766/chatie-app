@@ -43,13 +43,10 @@ export default function (socket, io) {
 
   // typing
 
+  //typing
   socket.on("typing", (conversation) => {
-    // console.log("typing", conversation);
-    socket.in(conversation).emit("typing");
+    socket.in(conversation).emit("typing", conversation);
   });
-
-  // stop typing
-
   socket.on("stop typing", (conversation) => {
     socket.in(conversation).emit("stop typing");
   });

@@ -5,6 +5,7 @@ const SearchResults = ({
   searchResults,
   setSearchResults,
   setIsChatScreenVisible,
+  typing,
 }) => {
   return (
     <div className="w-full convos scrollbar">

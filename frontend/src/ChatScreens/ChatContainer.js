@@ -6,8 +6,8 @@ import { getConversationMessage, updateMessages } from "../redux/chatSlice";
 import ChatActions from "./ChatActions";
 import SocketContext from "../Context/SocketContext";
 
-function ChatContainer({ onClose, socket, onlineUsers }) {
-  const [typing, setTyping] = useState(false);
+function ChatContainer({ onClose, socket, onlineUsers ,typing }) {
+  // const [typing, setTyping] = useState(false);
   const dispatch = useDispatch();
   const { activeConversation, messages } = useSelector((state) => state.chat);
   const { userInfo } = useSelector((state) => state.auth);
@@ -27,8 +27,8 @@ function ChatContainer({ onClose, socket, onlineUsers }) {
 
     //listening typing
 
-    socket.on("typing", () => setTyping(true));
-    socket.on("stop typing", () => setTyping(false));
+    // socket.on("typing", (conversation) => setTyping(conversation));
+    // socket.on("stop typing", () => setTyping(false));
   }, [dispatch]);
 
   useEffect(() => {
@@ -38,7 +38,10 @@ function ChatContainer({ onClose, socket, onlineUsers }) {
   }, [activeConversation]);
 
   return (
-    <div className="relative w-full  h-screen border-l dark:border-l-dark_border_2 select-none overflow-hidden ">
+    <div
+      className="relative w-full  h-screen border-l dark:border-l-dark_border_2
+     select-none overflow-hidden "
+    >
       <ChatUserHeader onClose={onClose} onlineUsers={onlineUsers} />
       <ChatMessages typing={typing} />
       <ChatActions />
