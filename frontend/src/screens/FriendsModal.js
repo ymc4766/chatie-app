@@ -1,5 +1,5 @@
 // FriendsModal.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversationMessage, getConversations } from "../redux/chatSlice";
 import Conversations from "../ConversationScreens/Conversations";
@@ -10,10 +10,33 @@ import Search from "../Search/Search";
 import ChatScreen from "../ChatScreens/ChatScreen";
 import { Outlet, useNavigate } from "react-router-dom";
 import SocketContext from "../Context/SocketContext";
-import { getConversationId } from "../utils/chatWithUser";
+import {
+  getConversationId,
+  getConversationName,
+  getConversationPicture,
+} from "../utils/chatWithUser";
+import Call from "../ChatScreens/VideoActions/Call";
+
+const callData = {
+  socketId: "",
+  receivingCall: true,
+  callEnded: false,
+  name: "",
+  picture: "",
+};
 
 function FriendsModal({ onClose, socket }) {
   // You can fetch the list of friends and their details here
+
+  const [call, setCall] = useState(callData);
+  const [stream, setStream] = useState();
+
+  const { receivingCall, callEnded } = call;
+  const [callAccepted, setCallAccepted] = useState(false);
+
+  const myVideo = useRef();
+  const userVideo = useRef();
+
   const [typing, setTyping] = useState(false);
 
   const [searchResults, setSearchResults] = useState([]);
@@ -32,6 +55,40 @@ function FriendsModal({ onClose, socket }) {
     // Additional logic you may want to perform when closing the chat screen
   };
 
+  //Call Api fn'lty
+  useEffect(() => {
+    setUpMedia();
+    socket.on("setup socket", (id) => {
+      setCall({ ...call, socketId: id });
+    });
+  }, []);
+
+  // console.log("socketId ----> ", call.socketId);
+
+  const callUser = () => {
+    enableMedia();
+    setCall({
+      ...call,
+      name: getConversationName(userInfo, activeConversation?.users),
+      picture: getConversationPicture(userInfo, activeConversation?.users),
+    });
+  };
+
+  const setUpMedia = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        setStream(stream);
+        // userVideo.current.srcObject = stream;
+      });
+  };
+
+  const enableMedia = () => {
+    myVideo.current.srcObject = stream;
+    console.log("video call clicked");
+  };
+
+  // ....
   useEffect(() => {
     if (userInfo) {
       dispatch(getConversations(userInfo?.token));
@@ -68,6 +125,7 @@ function FriendsModal({ onClose, socket }) {
               onClose={handleCloseChatScreen}
               onlineUsers={onlineUsers}
               typing={typing}
+              callUser={callUser}
             />
           ) : (
             <>
@@ -96,6 +154,15 @@ function FriendsModal({ onClose, socket }) {
               </div>
             </>
           )}
+
+          <Call
+            call={call}
+            setCall={setCall}
+            callAccepted={callAccepted}
+            userVideo={userVideo}
+            myVideo={myVideo}
+            stream={stream}
+          />
         </div>
       </div>
     </>

@@ -26,7 +26,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="bg-gray-800 p-4 text-white sticky top-0 z-50">
+    <nav className="bg-gray-800 p-4 text-white sticky top-0 z-20">
       {/* Hamburger menu for small screens */}
       <div className="lg:hidden">
         <button onClick={toggleSidebarOpen} className="text-xl">

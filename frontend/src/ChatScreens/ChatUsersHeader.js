@@ -8,10 +8,11 @@ import {
   getConversationName,
   getConversationPicture,
 } from "../utils/chatWithUser";
+import VideoCallIcon from "../svg/VideoCall";
 
 // import { VideoCallIcon } from "../../svg";
 
-const ChatUserHeader = ({ onClose, onlineUsers }) => {
+const ChatUserHeader = ({ onClose, onlineUsers, callUser }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const { activeConversation } = useSelector((state) => state.chat);
@@ -28,7 +29,7 @@ const ChatUserHeader = ({ onClose, onlineUsers }) => {
   }, [userInfo, activeConversation, onlineUsers]);
 
   return (
-    <div className="sticky top-0 z-40 h-[59px] dark:bg-dark_bg_2 flex items-center p16 select-none">
+    <div className="absolute top-0 sticky top-0 z-30 h-[59px] dark:bg-dark_bg_2 flex items-center p16 select-none">
       {/*Container*/}
       <div className="w-full flex items-center justify-between">
         {/*left*/}
@@ -63,9 +64,9 @@ const ChatUserHeader = ({ onClose, onlineUsers }) => {
               <RiArrowGoBackLine className="dark:fill-dark_svg_1" />
             </button>
           </li>
-          <li>
+          <li onClick={() => callUser()}>
             <button className="btn">
-              <SearchLargeIcon className="dark:fill-dark_svg_1" />
+              <VideoCallIcon className="dark:fill-dark_svg_1" />
             </button>
           </li>
           <li>

@@ -52,7 +52,7 @@ function Home({ socket }) {
     socket.emit("join", userInfo?._id);
     socket.on("get-online-users", (users) => {
       setOnlineUsers(users);
-      console.log("online users", users);
+      // console.log("online users", users);
     });
   }, [userInfo]);
 

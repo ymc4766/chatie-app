@@ -6,7 +6,7 @@ import { getConversationMessage, updateMessages } from "../redux/chatSlice";
 import ChatActions from "./ChatActions";
 import SocketContext from "../Context/SocketContext";
 
-function ChatContainer({ onClose, socket, onlineUsers ,typing }) {
+function ChatContainer({ onClose, socket, onlineUsers, typing, callUser }) {
   // const [typing, setTyping] = useState(false);
   const dispatch = useDispatch();
   const { activeConversation, messages } = useSelector((state) => state.chat);
@@ -42,7 +42,11 @@ function ChatContainer({ onClose, socket, onlineUsers ,typing }) {
       className="relative w-full  h-screen border-l dark:border-l-dark_border_2
      select-none overflow-hidden "
     >
-      <ChatUserHeader onClose={onClose} onlineUsers={onlineUsers} />
+      <ChatUserHeader
+        onClose={onClose}
+        onlineUsers={onlineUsers}
+        callUser={callUser}
+      />
       <ChatMessages typing={typing} />
       <ChatActions />
     </div>

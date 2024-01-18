@@ -13,6 +13,7 @@ export default function (socket, io) {
 
     // send online users frontend
     io.emit("get-online-users", onlineUsers);
+    io.emit("setup socket", socket.id);
   });
 
   //socket ofline - user
