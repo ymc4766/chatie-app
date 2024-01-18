@@ -8,10 +8,12 @@ import Loader from "../components/Loader";
 import SocketContext from "../Context/SocketContext";
 import { formatTimestamp } from "../utils/general";
 import { getConversationMessage, updateMessages } from "../redux/chatSlice";
+import Ringing from "../ChatScreens/VideoActions/Ringing";
 
-function Home({ socket }) {
+function Home({ socket, call, setCall }) {
   // console.log("sckthome", socket);
   const dispatch = useDispatch();
+  const [showRinging, setShowRinging] = useState(false); // Add this state
 
   const [topPosts, setTopPosts] = useState([]);
   const [fetchPosts, setFetchPosts] = useState([]);
@@ -47,6 +49,20 @@ function Home({ socket }) {
   const addPostDislikeHandler = (postId) => {
     dispatch(disLikePost(postId));
   };
+
+  useEffect(() => {
+    socket.on("call user", (data) => {
+      setCall({
+        ...call,
+        socketId: data.from,
+        name: data.name,
+        picture: data.picture,
+        signal: data.signal,
+        receivingCall: true,
+      });
+      setShowRinging(true); // Show ringing when a call is received
+    });
+  }, []);
 
   useEffect(() => {
     socket.emit("join", userInfo?._id);
@@ -138,6 +154,13 @@ function Home({ socket }) {
           ))}
         </div>
       </div>
+
+      {showRinging && (
+        <div className="fixed top-0 right-0 z-50">
+          {/* Render the Ringing component here */}
+          <Ringing call={call} setCall={setCall} />
+        </div>
+      )}
     </div>
   );
 }

@@ -5,8 +5,8 @@ import { FaCheck } from "react-icons/fa";
 import ringing1 from "./audio/ringing_phone1.mp3";
 import ringing2 from "./audio/public_audio_ringing.mp3";
 
-const Ringing = ({ call, setCall }) => {
-  const { receivingCall, callEnded } = call;
+const Ringing = ({ call, endCall, setCall, answerCall }) => {
+  const { receivingCall, callEnded, name, picture } = call;
 
   const [timer, setTimer] = useState(0);
   let interval;
@@ -17,7 +17,7 @@ const Ringing = ({ call, setCall }) => {
   };
 
   useEffect(() => {
-    if (timer < 5) {
+    if (timer < 30) {
       handleTimer();
     } else {
       setCall({ ...call, receivingCall: false });
@@ -27,34 +27,33 @@ const Ringing = ({ call, setCall }) => {
   }, [timer]);
 
   return (
-    <div
-      className="dark:bg-dark_bg_1  rounded-lg fixed  top-1/2 left-1/2  -translate-x-1/2 
-     -translate-y-1/2 shadow-lg z-30"
-    >
-      <div className="p-4 gap-4 flex items-center justify-between gap-x-8">
-        {/* // call Infos  */}
-        <div className=" flex items-center  gap-x-2 ">
+    <div className="ringing-dev  dark:bg-dark_bg_2 rounded-lg fixed  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-lg">
+      {/*Container*/}
+      <div className="p-4 flex items-center justify-between gap-x-8">
+        {/*Call infos*/}
+        <div className="flex items-center gap-x-2">
           <img
-            src="https://cdn-icons-png.flaticon.com/512/147/147142.png"
-            alt=""
+            src={picture}
+            alt={`caller profile picture`}
             className="w-28 h-28 rounded-full"
           />
-          <div className="dark:text-slate-200">
-            <h1>YUsuf moh</h1>
-            <span className="dark:text-slate-400"> WhatsApp Video ....</span>
+          <div>
+            <h1 className="dark:text-white">
+              <b>{name}</b>
+            </h1>
+            <span className="dark:text-dark_text_2">Whatsapp video...</span>
           </div>
         </div>
-
-        {/* call actions  */}
-        <ul className="flex items-center gap-x-3">
-          <li>
-            <button className="w-8 h-8 p-1 flex items-center justify-center rounded-full bg-red-600 ">
+        {/*Call actions*/}
+        <ul className="flex items-center gap-x-2">
+          <li onClick={endCall}>
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500">
               <CloseIcon className="fill-white w-5" />
             </button>
           </li>
-          <li>
-            <button className="w-8 h-8 p-1 flex items-center justify-center rounded-full bg-blue-600 ">
-              <FaCheck className="fill-white w-9 " />
+          <li onClick={answerCall}>
+            <button className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-500">
+              <FaCheck className="fill-white w-6 mt-2" />
             </button>
           </li>
         </ul>

@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Ringing from "./Ringing";
 import HeaderCall from "./HeaderCall";
 import CallArea from "./CallArea";
 import CallActions from "./CallActions";
 
 const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
-  const { receivingCall, callEnded } = call;
+  const { receivingCall, callEnded, name, picture } = call;
 
   const [showActions, setShowActions] = useState(false);
 
   return (
     <div
-      className={`fixed top-1/2 md:mt-[60px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[550px] z-30 rounded-2xl overflow-hidden  callbg`}
+      className={`fixed top-1/2 left-1/2 mt-[62px] -translate-x-1/2 -translate-y-1/2 w-[350px] h-[550px] z-20 rounded-2xl overflow-hidden callbg
+        ${receivingCall && !callAccepted ? "hidden" : ""}
+      }`}
       onMouseOver={() => setShowActions(true)}
       onMouseOut={() => setShowActions(false)}
     >
@@ -21,7 +23,7 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
           <HeaderCall />
 
           {/* // call area like ringing -- Info */}
-          <CallArea name="yusuf moh " />
+          <CallArea name={name} />
 
           {/* call actions */}
           {showActions ? <CallActions /> : null}
@@ -36,7 +38,7 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
               muted
               autoPlay
               className="largeVideoCall"
-            />
+            ></video>
           </div>
           <div>
             <video
@@ -52,9 +54,11 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
         </div>
       </div>
 
-      {receivingCall && !callAccepted && (
-        <Ringing call={call} setCall={setCall} />
-      )}
+      {receivingCall && !callAccepted ? (
+        <div className="bg-gray-700">
+          <Ringing call={call} setCall={setCall} />
+        </div>
+      ) : null}
     </div>
   );
 };

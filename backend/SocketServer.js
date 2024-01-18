@@ -8,11 +8,10 @@ export default function (socket, io) {
 
     if (!onlineUsers.some((u) => u.userId === user)) {
       onlineUsers.push({ userId: user, socketId: socket.id });
-      // console.log(`user ${user} is now Online`);
     }
-
-    // send online users frontend
+    //send online users to frontend
     io.emit("get-online-users", onlineUsers);
+    //send socket id
     io.emit("setup socket", socket.id);
   });
 
@@ -34,10 +33,10 @@ export default function (socket, io) {
 
   socket.on("sendMsg", (message) => {
     // console.log("new msg ---", message);
-    let conversation = message?.conversation;
+    let conversation = message.conversation;
     if (!conversation.users) return;
     conversation.users.forEach((user) => {
-      if (user._id === message?.sender?._id) return;
+      if (user._id === message.sender?._id) return;
       socket.in(user._id).emit("messageRecieve", message);
     });
   });
@@ -50,5 +49,20 @@ export default function (socket, io) {
   });
   socket.on("stop typing", (conversation) => {
     socket.in(conversation).emit("stop typing");
+  });
+
+  //  call user
+  socket.on("call user", (data) => {
+    // console.log("call user data .....>", data);
+
+    let userId = data.userToCall;
+    console.log("user to call ----", userId);
+    let userSocketId = onlineUsers?.find((user) => user.userId == userId);
+    io.to(userSocketId?.socketId).emit("call user", {
+      signal: data.signal,
+      from: data.from,
+      name: data.name,
+      picture: data.picture,
+    });
   });
 }

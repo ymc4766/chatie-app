@@ -15,13 +15,14 @@ import Header from "./header/Header";
 import LoginScreen from "./screenUser/LoginScreen";
 import PostDetails from "./screens/posts/PostDetails";
 import Navigation from "./sidebar/Navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import RegisterScreen from "./screenUser/RegisterScreen";
 import HomePage from "./screens/HomePage";
 
 const socket = io(process.env.REACT_APP_API_ENDPOINT);
 
 function App() {
+  const [call, setCall] = useState();
   // const sendMessage = (message) => {
   //   // Emit a 'message' event to the server
   //   socket.emit("message", { content: message });
@@ -46,7 +47,10 @@ function App() {
           <Header />
           <Navigation />
           <Routes>
-            <Route path="/" element={<Home socket={socket} />} />
+            <Route
+              path="/"
+              element={<Home socket={socket} call={call} setCall={setCall} />}
+            />
             <Route path="/homepage" element={<HomePage />} />
 
             {/* <Route path="/chatsscreen" element={<HomeScreen />} /> */}
@@ -58,7 +62,7 @@ function App() {
           <div className="flex items-center space-x-4">
             <CreatePostButton />
 
-            <ChatButton />
+            <ChatButton call={call} setCall={setCall} />
           </div>
         </Router>
       </SocketContext.Provider>

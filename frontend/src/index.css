@@ -57,6 +57,9 @@
   .moveActionsComp {
     @apply block;
   }
+  .ringing-dev {
+    z-index: 100;
+  }
 }
 
 ::-webkit-scrollbar {
