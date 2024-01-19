@@ -136,14 +136,27 @@ function ChatButton({ socket }) {
   };
 
   const enableMedia = async () => {
-    const currentStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-    setStream(currentStream);
-    myVideo.current.srcObject = currentStream;
-    // myVideo.current.srcObject = stream;
-    setShow(true);
+    try {
+      const currentStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      setStream(currentStream);
+      myVideo.current.srcObject = currentStream;
+      setShow(true);
+    } catch (error) {
+      if (
+        error.name === "NotAllowedError" ||
+        error.name === "PermissionDeniedError"
+      ) {
+        // Handle permission denied error
+        console.error("Camera permission denied.");
+      } else {
+        // Handle other errors
+        console.error("Error accessing camera:", error);
+      }
+    }
   };
   return (
     <div>
