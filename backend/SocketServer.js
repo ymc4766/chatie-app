@@ -61,14 +61,14 @@ export default function (socket, io) {
     io.to(userSocketId?.socketId).emit("call user", {
       signal: data.signal,
       from: data.from,
-      name: data.name,
-      picture: data.picture,
+      name: data?.name,
+      picture: data?.picture,
     });
   });
 
   //answer call
 
   socket.on("answer call", (data) => {
-    io.to(data.to).socket.emit("call accepted", data.signal);
+    io.to(data.to).emit("call accepted", data.signal);
   });
 }
