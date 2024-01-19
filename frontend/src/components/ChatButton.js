@@ -67,6 +67,7 @@ function ChatButton({ socket }) {
     });
   }, []);
 
+  // call user fn
   const callUser = () => {
     enableMedia();
     setCall({
@@ -92,9 +93,15 @@ function ChatButton({ socket }) {
       peer.on("stream", (stream) => {
         userVideo.current.srcObject = stream;
       });
+      peer.on("call accepted", (signal) => {
+        setCallAccepted(true);
+        peer.signal(signal);
+      });
       connectionRef.current = peer;
     });
-    setIsCallActive(true);
+
+    // setIsCallActive(true);
+
     // setIsChatScreenVisible(false);
   };
 
@@ -103,10 +110,21 @@ function ChatButton({ socket }) {
     enableMedia();
     setCallAccepted(true);
     const peer = new Peer({
-      initiator: true,
+      initiator: false,
       trickle: false,
       stream: stream,
     });
+
+    peer.on("signal", (data) => {
+      socket?.emit("answer call", { signal: data, to: call.socketId });
+    });
+
+    peer.on("stream", (stream) => {
+      userVideo.current.srcObject = stream;
+    });
+
+    peer.signal(call.signal);
+    connectionRef.current = peer;
   };
 
   const setUpMedia = () => {
@@ -117,8 +135,14 @@ function ChatButton({ socket }) {
       });
   };
 
-  const enableMedia = () => {
-    myVideo.current.srcObject = stream;
+  const enableMedia = async () => {
+    const currentStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    setStream(currentStream);
+    myVideo.current.srcObject = currentStream;
+    // myVideo.current.srcObject = stream;
     setShow(true);
   };
   return (
@@ -136,20 +160,26 @@ function ChatButton({ socket }) {
       )}
 
       {/* {call.name && ( */}
-      <Call
-        call={call}
-        setCall={setCall}
-        callAccepted={callAccepted}
-        myVideo={myVideo}
-        userVideo={userVideo}
-        stream={stream}
-      />
 
-      {showRinging && (
+      <div
+        className={(show || call?.signal) && !call.callEnded ? "" : "hidden"}
+      >
+        <Call
+          call={call}
+          setCall={setCall}
+          callAccepted={callAccepted}
+          myVideo={myVideo}
+          userVideo={userVideo}
+          stream={stream}
+          answerCall={answerCall}
+        />
+      </div>
+
+      {showRinging && receivingCall && !callAccepted ? (
         <div className="fixed top-0 right-0 z-50">
-          <Ringing call={call} setCall={setCall} />
+          <Ringing call={call} setCall={setCall} answerCall={answerCall} />
         </div>
-      )}
+      ) : null}
       {/* )} */}
     </div>
   );

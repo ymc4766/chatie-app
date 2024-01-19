@@ -4,7 +4,15 @@ import HeaderCall from "./HeaderCall";
 import CallArea from "./CallArea";
 import CallActions from "./CallActions";
 
-const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
+const Call = ({
+  call,
+  setCall,
+  callAccepted,
+  myVideo,
+  userVideo,
+  stream,
+  answerCall,
+}) => {
   const { receivingCall, callEnded, name, picture } = call;
 
   console.log("name picture call ....", call);
@@ -33,31 +41,36 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
 
         {/* video streams */}
         <div>
-          <div>
-            <video
-              ref={userVideo}
-              playsInline
-              muted
-              autoPlay
-              className="largeVideoCall"
-            ></video>
-          </div>
-          <div>
-            <video
-              ref={myVideo}
-              playsInline
-              muted
-              autoPlay
-              className={`smallVideoCall ${
-                showActions ? "moveVideoCall" : ""
-              } `}
-            ></video>
-          </div>
+          {callAccepted && !callEnded ? (
+            <div>
+              <video
+                ref={userVideo}
+                playsInline
+                muted
+                autoPlay
+                className="largeVideoCall"
+              ></video>
+            </div>
+          ) : null}
+
+          {stream ? (
+            <div>
+              <video
+                ref={myVideo}
+                playsInline
+                muted
+                autoPlay
+                className={`smallVideoCall ${
+                  showActions ? "moveVideoCall" : ""
+                } `}
+              ></video>
+            </div>
+          ) : null}
         </div>
       </div>
-      {/* 
-      {receivingCall && !callAccepted && (
-        <div className="z-40">
+
+      {/* {receivingCall && !callAccepted && (
+        <div className="">
           <Ringing call={call} setCall={setCall} />
         </div>
       )} */}

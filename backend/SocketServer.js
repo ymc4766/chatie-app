@@ -56,7 +56,7 @@ export default function (socket, io) {
     // console.log("call user data .....>", data);
 
     let userId = data.userToCall;
-    console.log("user to call ----", userId);
+    // console.log("user to call ----", userId);
     let userSocketId = onlineUsers?.find((user) => user.userId == userId);
     io.to(userSocketId?.socketId).emit("call user", {
       signal: data.signal,
@@ -64,5 +64,11 @@ export default function (socket, io) {
       name: data.name,
       picture: data.picture,
     });
+  });
+
+  //answer call
+
+  socket.on("answer call", (data) => {
+    io.to(data.to).socket.emit("call accepted", data.signal);
   });
 }
