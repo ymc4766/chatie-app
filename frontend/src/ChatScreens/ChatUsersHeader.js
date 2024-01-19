@@ -29,7 +29,8 @@ const ChatUserHeader = ({ onClose, onlineUsers, callUser }) => {
   }, [userInfo, activeConversation, onlineUsers]);
 
   return (
-    <div className="absolute top-0 sticky top-0 z-40 h-[59px] dark:bg-dark_bg_2 flex items-center p16 select-none">
+    <div className="sticky top-0 h-[50px] w-full z-40 dark:bg-dark_bg_2 flex items-center p16 px-3 m-3">
+      {" "}
       {/*Container*/}
       <div className="w-full flex items-center justify-between">
         {/*left*/}

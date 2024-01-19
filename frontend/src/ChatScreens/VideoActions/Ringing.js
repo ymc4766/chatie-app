@@ -8,7 +8,7 @@ import ringing2 from "./audio/public_audio_ringing.mp3";
 const Ringing = ({ call, setCall, endCall, answerCall }) => {
   const { receivingCall, callEnded, name, picture } = call;
 
-  console.log("receivingCall from ringing comp ....", receivingCall);
+  // console.log("receivingCall from ringing comp ....", receivingCall);
 
   const [timer, setTimer] = useState(0);
   let interval;
@@ -48,7 +48,7 @@ const Ringing = ({ call, setCall, endCall, answerCall }) => {
         </div>
         {/*Call actions*/}
         <ul className="flex items-center gap-x-2">
-          <li onClick={endCall}>
+          <li onClick={() => endCall()}>
             <button className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500">
               <CloseIcon className="fill-white w-5" />
             </button>

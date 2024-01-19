@@ -6,7 +6,7 @@ import { IoVolumeMuteSharp } from "react-icons/io5";
 import DialIcon from "../../svg/Dial";
 import { BsMicMute } from "react-icons/bs";
 
-const CallActions = () => {
+const CallActions = ({ endCall }) => {
   return (
     <div className="h-22  w-full absolute bottom-0 z-40 px-1">
       {/* //container  */}
@@ -32,7 +32,7 @@ const CallActions = () => {
               <BsMicMute className="fill-white " size={24} />
             </button>
           </li>
-          <li>
+          <li onClick={() => endCall()}>
             <button className="btn_secondary rotate-[135deg]">
               <DialIcon className="fill-white w-5 " />
             </button>

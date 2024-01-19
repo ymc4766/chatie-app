@@ -5,7 +5,7 @@ import Peer from "simple-peer";
 import FriendsModal from "../screens/FriendsModal";
 import "../styles/tweetButton.css";
 import Call from "../ChatScreens/VideoActions/Call";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SocketContext from "../Context/SocketContext";
 import {
   getConversationId,
@@ -13,8 +13,16 @@ import {
   getConversationPicture,
 } from "../utils/chatWithUser";
 import Ringing from "../ChatScreens/VideoActions/Ringing";
+import { getConversations, updateMessages } from "../redux/chatSlice";
 
 function ChatButton({ socket }) {
+  const dispatch = useDispatch();
+
+  const { activeConversation } = useSelector((state) => state.chat);
+
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const [isModalOpen, setModalOpen] = useState(false);
   const [call, setCall] = useState({
     socketId: "",
     receivingCall: false,
@@ -22,24 +30,18 @@ function ChatButton({ socket }) {
     name: "",
     picture: "",
   });
-  const [isModalOpen, setModalOpen] = useState(false);
   const [show, setShow] = useState(false);
   const [stream, setStream] = useState();
   const [isCallActive, setIsCallActive] = useState(false);
   const [showRinging, setShowRinging] = useState(false);
 
-  const [callAccepted, setCallAccepted] = useState(false);
-
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
 
-  const { activeConversation } = useSelector((state) => state.chat);
-
-  const { userInfo } = useSelector((state) => state.auth);
-
   // const { receivingCall, callEnded, socketId } = call;
   const { receivingCall, callEnded, socketId } = call;
+  const [callAccepted, setCallAccepted] = useState(false);
 
   const handleButtonClick = () => {
     setModalOpen(true);
@@ -64,6 +66,16 @@ function ChatButton({ socket }) {
         receivingCall: true,
       });
       setShowRinging(true);
+      setModalOpen(false);
+    });
+
+    socket.on("end call", () => {
+      setShow(false);
+      setCall({ ...call, callEnded: true, receivingCall: false });
+      myVideo.current.srcObject = null;
+      if (callAccepted) {
+        connectionRef?.current?.destroy();
+      }
     });
   }, []);
 
@@ -127,6 +139,16 @@ function ChatButton({ socket }) {
     connectionRef.current = peer;
   };
 
+  //--end call  funcion
+  const endCall = () => {
+    setShow(false);
+    setShowRinging(false);
+    setCall({ ...call, callEnded: true, receivingCall: false });
+    myVideo.current.srcObject = null;
+    socket.emit("end call", call.socketId);
+    connectionRef?.current?.destroy();
+  };
+
   const setUpMedia = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
@@ -158,6 +180,14 @@ function ChatButton({ socket }) {
       }
     }
   };
+
+  //get Conversations
+  useEffect(() => {
+    if (userInfo?.token) {
+      dispatch(getConversations(userInfo.token));
+    }
+  }, [userInfo]);
+
   return (
     <div>
       <button className="chat-button" onClick={handleButtonClick}>
@@ -184,13 +214,20 @@ function ChatButton({ socket }) {
           myVideo={myVideo}
           userVideo={userVideo}
           stream={stream}
+          showRinging={showRinging}
           answerCall={answerCall}
+          endCall={endCall}
         />
       </div>
 
-      {showRinging && receivingCall && !callAccepted ? (
+      {receivingCall && !callAccepted ? (
         <div className="fixed top-0 right-0 z-50">
-          <Ringing call={call} setCall={setCall} answerCall={answerCall} />
+          <Ringing
+            call={call}
+            setCall={setCall}
+            answerCall={answerCall}
+            endCall={endCall}
+          />
         </div>
       ) : null}
       {/* )} */}

@@ -3,6 +3,7 @@ import Ringing from "./Ringing";
 import HeaderCall from "./HeaderCall";
 import CallArea from "./CallArea";
 import CallActions from "./CallActions";
+import ringing1 from "./audio/ringing_phone1.mp3";
 
 const Call = ({
   call,
@@ -11,11 +12,13 @@ const Call = ({
   myVideo,
   userVideo,
   stream,
-  answerCall,
+  endCall,
+  show,
+  showRinging,
 }) => {
   const { receivingCall, callEnded, name, picture } = call;
-
-  console.log("name picture call ....", call);
+  const [toggle, setToggle] = useState(false);
+  // console.log("name picture call ....", call);
 
   const [showActions, setShowActions] = useState(false);
 
@@ -36,7 +39,7 @@ const Call = ({
           <CallArea name={name} picture={picture} />
 
           {/* call actions */}
-          {showActions ? <CallActions /> : null}
+          {showActions ? <CallActions endCall={endCall} /> : null}
         </div>
 
         {/* video streams */}
@@ -48,7 +51,8 @@ const Call = ({
                 playsInline
                 muted
                 autoPlay
-                className="largeVideoCall"
+                className={toggle ? "smallVideoCall" : "largeVideoCall"}
+                onClick={() => setToggle((prev) => !prev)}
               ></video>
             </div>
           ) : null}
@@ -60,9 +64,10 @@ const Call = ({
                 playsInline
                 muted
                 autoPlay
-                className={`smallVideoCall ${
+                className={`${toggle ? "largeVideoCall" : "smallVideoCall"} ${
                   showActions ? "moveVideoCall" : ""
                 } `}
+                onClick={() => setToggle((prev) => !prev)}
               ></video>
             </div>
           ) : null}
@@ -74,6 +79,10 @@ const Call = ({
           <Ringing call={call} setCall={setCall} />
         </div>
       )} */}
+
+      {showRinging && !callAccepted ? (
+        <audio src={ringing1} autoPlay loop />
+      ) : null}
     </div>
   );
 };

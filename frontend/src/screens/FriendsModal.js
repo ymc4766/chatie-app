@@ -69,14 +69,14 @@ function FriendsModal({ onClose, socket, callUser }) {
         </button> */}
         <div className="mt-1">
           {isChatScreenVisible && activeConversation._id ? (
-            <>
+            <div className="">
               <ChatScreen
                 onClose={handleCloseChatScreen}
                 onlineUsers={onlineUsers}
                 typing={typing}
                 callUser={callUser}
               />
-            </>
+            </div>
           ) : (
             <>
               <ChatHeader />

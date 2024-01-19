@@ -40,7 +40,7 @@ function ChatContainer({ onClose, socket, onlineUsers, typing, callUser }) {
   return (
     <div
       className="relative w-full  h-screen border-l dark:border-l-dark_border_2
-     select-none overflow-hidden "
+      "
     >
       <ChatUserHeader
         onClose={onClose}
