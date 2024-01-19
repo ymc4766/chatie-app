@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Peer from "simple-peer";
+
 import Post from "../components/Post";
 import TopStory from "../components/TopStory";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,22 +11,29 @@ import SocketContext from "../Context/SocketContext";
 import { formatTimestamp } from "../utils/general";
 import { getConversationMessage, updateMessages } from "../redux/chatSlice";
 import Ringing from "../ChatScreens/VideoActions/Ringing";
+import Call from "../ChatScreens/VideoActions/Call";
+import {
+  getConversationId,
+  getConversationName,
+  getConversationPicture,
+} from "../utils/chatWithUser";
 
-function Home({ socket, call, setCall }) {
+function Home({ socket }) {
   // console.log("sckthome", socket);
+
   const dispatch = useDispatch();
   const [showRinging, setShowRinging] = useState(false); // Add this state
-
-  const [topPosts, setTopPosts] = useState([]);
-  const [fetchPosts, setFetchPosts] = useState([]);
-  const [onlineUsers, setOnlineUsers] = useState([]);
-
+  // const [call, setCall] = useState(callData);
   const { activeConversation } = useSelector((state) => state.chat);
 
   const { userInfo } = useSelector((state) => state.auth);
   const { posts, likes, disLikes, isLoading } = useSelector(
     (state) => state.posts
   );
+
+  const [topPosts, setTopPosts] = useState([]);
+  const [fetchPosts, setFetchPosts] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   useEffect(() => {
     if (posts) {
@@ -49,20 +58,6 @@ function Home({ socket, call, setCall }) {
   const addPostDislikeHandler = (postId) => {
     dispatch(disLikePost(postId));
   };
-
-  useEffect(() => {
-    socket.on("call user", (data) => {
-      setCall({
-        ...call,
-        socketId: data.from,
-        name: data.name,
-        picture: data.picture,
-        signal: data.signal,
-        receivingCall: true,
-      });
-      setShowRinging(true); // Show ringing when a call is received
-    });
-  }, []);
 
   useEffect(() => {
     socket.emit("join", userInfo?._id);
@@ -154,13 +149,6 @@ function Home({ socket, call, setCall }) {
           ))}
         </div>
       </div>
-
-      {showRinging && (
-        <div className="fixed top-0 right-0 z-50">
-          {/* Render the Ringing component here */}
-          <Ringing call={call} setCall={setCall} />
-        </div>
-      )}
     </div>
   );
 }

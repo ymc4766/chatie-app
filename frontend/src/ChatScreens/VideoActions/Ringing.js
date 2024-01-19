@@ -5,8 +5,10 @@ import { FaCheck } from "react-icons/fa";
 import ringing1 from "./audio/ringing_phone1.mp3";
 import ringing2 from "./audio/public_audio_ringing.mp3";
 
-const Ringing = ({ call, endCall, setCall, answerCall }) => {
+const Ringing = ({ call, setCall, endCall, answerCall }) => {
   const { receivingCall, callEnded, name, picture } = call;
+
+  console.log("receivingCall from ringing comp ....", receivingCall);
 
   const [timer, setTimer] = useState(0);
   let interval;

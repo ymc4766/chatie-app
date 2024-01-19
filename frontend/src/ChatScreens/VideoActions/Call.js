@@ -7,6 +7,8 @@ import CallActions from "./CallActions";
 const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
   const { receivingCall, callEnded, name, picture } = call;
 
+  console.log("name picture call ....", call);
+
   const [showActions, setShowActions] = useState(false);
 
   return (
@@ -23,7 +25,7 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
           <HeaderCall />
 
           {/* // call area like ringing -- Info */}
-          <CallArea name={name} />
+          <CallArea name={name} picture={picture} />
 
           {/* call actions */}
           {showActions ? <CallActions /> : null}
@@ -53,12 +55,12 @@ const Call = ({ call, setCall, callAccepted, myVideo, userVideo, stream }) => {
           </div>
         </div>
       </div>
-
-      {receivingCall && !callAccepted ? (
-        <div className="bg-gray-700">
+      {/* 
+      {receivingCall && !callAccepted && (
+        <div className="z-40">
           <Ringing call={call} setCall={setCall} />
         </div>
-      ) : null}
+      )} */}
     </div>
   );
 };
