@@ -32,7 +32,7 @@ const CallActions = ({ endCall }) => {
               <BsMicMute className="fill-white " size={24} />
             </button>
           </li>
-          <li onClick={() => endCall()}>
+          <li onClick={endCall}>
             <button className="btn_secondary rotate-[135deg]">
               <DialIcon className="fill-white w-5 " />
             </button>

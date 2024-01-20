@@ -1,32 +1,31 @@
 import React, { useEffect, useState } from "react";
-import Ringing from "./Ringing";
+import ringing1 from "../../audio/ringing_phone1.mp3";
+
 import HeaderCall from "./HeaderCall";
 import CallArea from "./CallArea";
 import CallActions from "./CallActions";
-import ringing1 from "./audio/ringing_phone1.mp3";
 
 const Call = ({
   call,
-  setCall,
-  callAccepted,
+
   myVideo,
   userVideo,
+  callAccepted,
   stream,
   endCall,
-  show,
-  showRinging,
 }) => {
   const { receivingCall, callEnded, name, picture } = call;
   const [toggle, setToggle] = useState(false);
   // console.log("name picture call ....", call);
 
   const [showActions, setShowActions] = useState(false);
+  // ${receivingCall && !callAccepted ? "hidden" : ""}
 
   return (
     <div
-      className={`fixed top-1/2 left-1/2 mt-[62px] -translate-x-1/2 -translate-y-1/2 w-[350px] h-[550px] z-20 rounded-2xl overflow-hidden callbg
-        ${receivingCall && !callAccepted ? "hidden" : ""}
-      }`}
+      className={`fixed top-1/2 left-1/2 mt-[62px] -translate-x-1/2 
+      -translate-y-1/2 w-[350px] h-[550px] z-20 rounded-2xl overflow-hidden callbg    
+      ${receivingCall && !callAccepted ? "hidden" : ""}`}
       onMouseOver={() => setShowActions(true)}
       onMouseOut={() => setShowActions(false)}
     >
@@ -36,7 +35,7 @@ const Call = ({
           <HeaderCall />
 
           {/* // call area like ringing -- Info */}
-          <CallArea name={name} picture={picture} />
+          <CallArea name={name} />
 
           {/* call actions */}
           {showActions ? <CallActions endCall={endCall} /> : null}
@@ -74,14 +73,19 @@ const Call = ({
         </div>
       </div>
 
-      {/* {receivingCall && !callAccepted && (
-        <div className="">
-          <Ringing call={call} setCall={setCall} />
-        </div>
-      )} */}
+      {/* {receivingCall && !callAccepted ? (
+        <Ringing
+          call={call}
+          setCall={setCall}
+          answerCall={answerCall}
+          endCall={endCall}
+        />
+      ) : null} */}
 
-      {showRinging && !callAccepted ? (
-        <audio src={ringing1} autoPlay loop />
+      {receivingCall && !callAccepted && !callEnded ? (
+        <div className="">
+          <audio src={ringing1} autoPlay loop></audio>
+        </div>
       ) : null}
     </div>
   );

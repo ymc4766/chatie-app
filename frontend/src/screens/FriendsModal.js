@@ -1,9 +1,7 @@
-// FriendsModal.jsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getConversationMessage, getConversations } from "../redux/chatSlice";
 import Conversations from "../ConversationScreens/Conversations";
-import Peer from "simple-peer";
 
 import ChatHeader from "../header/ChatHeader";
 import SearchResults from "../Search/SearchResults";
@@ -13,48 +11,46 @@ import SocketContext from "../Context/SocketContext";
 
 import { useNavigate } from "react-router-dom";
 
-function FriendsModal({ onClose, socket, callUser }) {
+function FriendsModal({
+  onClose,
+  socket,
+  onlineUsers,
+  typing,
+  callUser,
+  call,
+}) {
   // You can fetch the list of friends and their details here
-  const [showRinging, setShowRinging] = useState(false); // Add this state
+  // const [showRinging, setShowRinging] = useState(false); // Add this state
   const dispatch = useDispatch();
+  const { callEnded, receivingCall } = call;
 
   const { userInfo } = useSelector((state) => state.auth);
   const { conversations, activeConversation } = useSelector(
     (state) => state.chat
   );
 
-  const [typing, setTyping] = useState(false);
+  // const [typing, setTyping] = useState(false);
 
   const [searchResults, setSearchResults] = useState([]);
   const [isChatScreenVisible, setIsChatScreenVisible] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState([]); // State to store online users
+  // const [onlineUsers, setOnlineUsers] = useState([]); // State to store online users
   const navigate = useNavigate();
 
   useEffect(() => {}, [navigate]);
   const handleCloseChatScreen = () => {
-    setIsChatScreenVisible(false);
+    if (call) {
+      setIsChatScreenVisible(false);
+    }
     // Additional logic you may want to perform when closing the chat screen
+    setIsChatScreenVisible(false);
   };
 
   // ....
-  useEffect(() => {
-    if (userInfo) {
-      dispatch(getConversations(userInfo?.token));
-    }
-
-    socket.on("get-online-users", (users) => {
-      setOnlineUsers(users);
-      // console.log("online users", users);
-    });
-
-    socket.on("typing", (conversation) => setTyping(conversation));
-    socket.on("stop typing", () => setTyping(false));
-  }, [dispatch, userInfo, conversations, typing]);
 
   return (
     <>
       <div
-        className=" fixed inset-0 bg-black opacity-30 "
+        className=" fixed inset-1 bg-black opacity-30 "
         onClick={onClose}
       ></div>
       <div
@@ -74,6 +70,7 @@ function FriendsModal({ onClose, socket, callUser }) {
                 onClose={handleCloseChatScreen}
                 onlineUsers={onlineUsers}
                 typing={typing}
+                call={call}
                 callUser={callUser}
               />
             </div>

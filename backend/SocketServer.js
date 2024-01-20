@@ -3,9 +3,8 @@ export default function (socket, io) {
   // user joins or opens app
 
   socket.on("join", (user) => {
-    // console.log("user joined -", user);
     socket.join(user);
-
+    //add joined user to online users
     if (!onlineUsers.some((u) => u.userId === user)) {
       onlineUsers.push({ userId: user, socketId: socket.id });
     }
@@ -53,19 +52,15 @@ export default function (socket, io) {
 
   //  call user
   socket.on("call user", (data) => {
-    // console.log("call user data .....>", data);
-
     let userId = data.userToCall;
-    // console.log("user to call ----", userId);
-    let userSocketId = onlineUsers?.find((user) => user.userId == userId);
-    io.to(userSocketId?.socketId).emit("call user", {
+    let userSocketId = onlineUsers.find((user) => user.userId == userId);
+    io.to(userSocketId.socketId).emit("call user", {
       signal: data.signal,
       from: data.from,
-      name: data?.name,
-      picture: data?.picture,
+      name: data.name,
+      picture: data.picture,
     });
   });
-
   //answer call
 
   socket.on("answer call", (data) => {

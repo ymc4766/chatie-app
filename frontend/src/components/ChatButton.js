@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import SocketContext from "../Context/SocketContext";
+
 import { BsChat } from "react-icons/bs";
 import Peer from "simple-peer";
 
@@ -6,7 +8,6 @@ import FriendsModal from "../screens/FriendsModal";
 import "../styles/tweetButton.css";
 import Call from "../ChatScreens/VideoActions/Call";
 import { useDispatch, useSelector } from "react-redux";
-import SocketContext from "../Context/SocketContext";
 import {
   getConversationId,
   getConversationName,
@@ -15,33 +16,34 @@ import {
 import Ringing from "../ChatScreens/VideoActions/Ringing";
 import { getConversations, updateMessages } from "../redux/chatSlice";
 
+const callData = {
+  socketId: "",
+  receivingCall: false,
+  callEnded: false,
+  name: "",
+  picture: "",
+};
 function ChatButton({ socket }) {
   const dispatch = useDispatch();
 
   const { activeConversation } = useSelector((state) => state.chat);
 
   const { userInfo } = useSelector((state) => state.auth);
-
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [call, setCall] = useState({
-    socketId: "",
-    receivingCall: false,
-    callEnded: false,
-    name: "",
-    picture: "",
-  });
+  const [call, setCall] = useState(callData);
   const [show, setShow] = useState(false);
   const [stream, setStream] = useState();
+  const [callAccepted, setCallAccepted] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
   const [showRinging, setShowRinging] = useState(false);
+  const { receivingCall, callEnded, socketId } = call;
 
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
 
   // const { receivingCall, callEnded, socketId } = call;
-  const { receivingCall, callEnded, socketId } = call;
-  const [callAccepted, setCallAccepted] = useState(false);
 
   const handleButtonClick = () => {
     setModalOpen(true);
@@ -50,7 +52,16 @@ function ChatButton({ socket }) {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+  const [typing, setTyping] = useState(false);
+  useEffect(() => {
+    socket.on("get-online-users", (users) => {
+      setOnlineUsers(users);
+      // console.log("online users", users);
+    });
 
+    socket.on("typing", (conversation) => setTyping(conversation));
+    socket.on("stop typing", () => setTyping(false));
+  }, [dispatch, userInfo]);
   useEffect(() => {
     setUpMedia();
     socket.on("setup socket", (id) => {
@@ -66,7 +77,7 @@ function ChatButton({ socket }) {
         receivingCall: true,
       });
       setShowRinging(true);
-      setModalOpen(false);
+      // setModalOpen(false);
     });
 
     socket.on("end call", () => {
@@ -149,8 +160,8 @@ function ChatButton({ socket }) {
     connectionRef?.current?.destroy();
   };
 
-  const setUpMedia = () => {
-    navigator.mediaDevices
+  const setUpMedia = async () => {
+    await navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         setStream(stream);
@@ -159,7 +170,7 @@ function ChatButton({ socket }) {
 
   const enableMedia = async () => {
     try {
-      const currentStream = await navigator.mediaDevices.getUserMedia({
+      let currentStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
@@ -180,7 +191,6 @@ function ChatButton({ socket }) {
       }
     }
   };
-
   //get Conversations
   useEffect(() => {
     if (userInfo?.token) {
@@ -196,17 +206,18 @@ function ChatButton({ socket }) {
       {isModalOpen && !receivingCall && (
         <FriendsModal
           onClose={handleCloseModal}
+          onlineUsers={onlineUsers}
+          typing={typing}
           call={call}
           setCall={setCall}
           callUser={callUser}
+          callAccepted={callAccepted}
         />
       )}
 
       {/* {call.name && ( */}
 
-      <div
-        className={(show || call?.signal) && !call.callEnded ? "" : "hidden"}
-      >
+      <div className={(show || call.signal) && !callEnded ? "" : "hidden"}>
         <Call
           call={call}
           setCall={setCall}
@@ -214,14 +225,13 @@ function ChatButton({ socket }) {
           myVideo={myVideo}
           userVideo={userVideo}
           stream={stream}
-          showRinging={showRinging}
           answerCall={answerCall}
           endCall={endCall}
         />
       </div>
 
       {receivingCall && !callAccepted ? (
-        <div className="fixed top-0 right-0 z-50">
+        <div className=" ">
           <Ringing
             call={call}
             setCall={setCall}

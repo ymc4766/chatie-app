@@ -14,7 +14,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-import "dotenv/config";
+import dotenv from "dotenv";
 
 import cors from "cors";
 import { Server } from "socket.io";
@@ -32,16 +32,16 @@ import logger from "./config/logger.js";
 import SocketServer from "./SocketServer.js";
 
 const app = express();
-app.use((req, res, next) => {
-  res.setHeader(
-    "Cache-Control",
-    "no-store, no-cache, must-revalidate, private"
-  );
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader(
+//     "Cache-Control",
+//     "no-store, no-cache, must-revalidate, private"
+//   );
+//   next();
+// });
 const port = process.env.PORT || 5000;
 
-// dotenv.config();
+dotenv.config();
 db();
 
 // app.use(morgan());

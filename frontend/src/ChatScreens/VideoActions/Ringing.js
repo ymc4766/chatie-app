@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import CloseIcon from "../../svg/Close";
 import { RiCheckFill, RiPassValidFill } from "react-icons/ri";
 import { FaCheck } from "react-icons/fa";
-import ringing1 from "./audio/ringing_phone1.mp3";
-import ringing2 from "./audio/public_audio_ringing.mp3";
+import ringing1 from "../../audio/ringing_phone1.mp3";
+import ringing2 from "../../audio/public_audio_ringing.mp3";
 
 const Ringing = ({ call, setCall, endCall, answerCall }) => {
   const { receivingCall, callEnded, name, picture } = call;
@@ -61,8 +61,7 @@ const Ringing = ({ call, setCall, endCall, answerCall }) => {
         </ul>
       </div>
       {/* // ringing */}
-
-      <audio src={ringing2} autoPlay loop></audio>
+      <audio src={ringing2} autoPlay loop />
     </div>
   );
 };

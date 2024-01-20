@@ -5,6 +5,7 @@ import PostCard from "./posts/PostCard";
 import { getPosts } from "../redux/postSlice";
 import { formatTimestamp } from "../utils/general";
 import TopStory from "../components/TopStory";
+import { Outlet } from "react-router-dom";
 
 const HomePage = () => {
   const [topPosts, setTopPosts] = useState([]);
@@ -25,21 +26,20 @@ const HomePage = () => {
 
   return (
     <div className="flex">
-      <div className="w-1/4 bg-gray-200 p-4 sticky top-0">
+      {/* <div className="w-1/4 bg-gray-200 p-4 sticky top-0">
         {" "}
-        {/* Sidebar 25% */}
-        {/* Your Sidebar content goes here */}
+       Your Sidebar content goes here 
         Sidebar
-      </div>
+      </div>  */}
 
-      <div className="w-1/2 p-4 overflow-y-auto px-3">
+      <div className="w-full">
         {" "}
         {/* Middle div for posts 50% */}
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-
+      {/* 
       <div className="w-1/4 bg-gray-100 p-4 sticky top-4 h-screen">
         {" "}
         <div className="hidden md:block  md:pl-4">
@@ -73,7 +73,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { FaPen } from "react-icons/fa";
 import { BsChat } from "react-icons/bs";
 
@@ -7,7 +6,6 @@ import "../styles/tweetButton.css";
 import CreatePost from "../screens/posts/CreatePost";
 import { getPosts } from "../redux/postSlice";
 import { useDispatch } from "react-redux";
-import FriendsModal from "../screens/FriendsModal";
 
 const CreatePostButton = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
