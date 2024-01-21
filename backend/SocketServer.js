@@ -54,7 +54,7 @@ export default function (socket, io) {
   socket.on("call user", (data) => {
     let userId = data.userToCall;
     let userSocketId = onlineUsers.find((user) => user.userId == userId);
-    io.to(userSocketId.socketId).emit("call user", {
+    io.to(userSocketId?.socketId).emit("call user", {
       signal: data.signal,
       from: data.from,
       name: data.name,
@@ -63,6 +63,9 @@ export default function (socket, io) {
   });
   //answer call
 
+  // socket.on("answer call", (data) => {
+  //   io.to(data.to).emit("call accepted", data.signal);
+  // });
   socket.on("answer call", (data) => {
     io.to(data.to).emit("call accepted", data.signal);
   });

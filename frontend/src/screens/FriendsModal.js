@@ -22,7 +22,7 @@ function FriendsModal({
   // You can fetch the list of friends and their details here
   // const [showRinging, setShowRinging] = useState(false); // Add this state
   const dispatch = useDispatch();
-  const { callEnded, receivingCall } = call;
+  // const { callEnded, receivingCall } = call;
 
   const { userInfo } = useSelector((state) => state.auth);
   const { conversations, activeConversation } = useSelector(
@@ -55,7 +55,7 @@ function FriendsModal({
       ></div>
       <div
         className="fixed bottom-0  right-4 p-0 mb-4 bg-white border border-gray-300 shadow-md
-       w-[90%] md:w-1/3 h-[80%] overflow-y-auto dark:bg-dark_bg_1 sm:px-4 z-20 "
+       w-[90%] md:w-1/3 h-[80%] overflow-y-auto dark:bg-dark_bg_1 sm:px-4 z-10 "
       >
         {/* <button
           className="absolute top-1 right-2  text-lg font-bold mb-2 "

@@ -5,18 +5,27 @@ import HeaderCall from "./HeaderCall";
 import CallArea from "./CallArea";
 import CallActions from "./CallActions";
 
+// call={call}
+// setCall={setCall}
+// callAccepted={callAccepted}
+// myVideo={myVideo}
+// userVideo={userVideo}
+// stream={stream}
+// answerCall={answerCall}
+// endCall={endCall}
+
 const Call = ({
   call,
-
+  setCall,
+  callAccepted,
   myVideo,
   userVideo,
-  callAccepted,
   stream,
   endCall,
 }) => {
-  const { receivingCall, callEnded, name, picture } = call;
+  const { receivingCall, callEnded, name } = call;
   const [toggle, setToggle] = useState(false);
-  // console.log("name picture call ....", call);
+  console.log("name picture call ....", call);
 
   const [showActions, setShowActions] = useState(false);
   // ${receivingCall && !callAccepted ? "hidden" : ""}
@@ -25,7 +34,7 @@ const Call = ({
     <div
       className={`fixed top-1/2 left-1/2 mt-[62px] -translate-x-1/2 
       -translate-y-1/2 w-[350px] h-[550px] z-20 rounded-2xl overflow-hidden callbg    
-      ${receivingCall && !callAccepted ? "hidden" : ""}`}
+      ${call.receivingCall && !callAccepted ? "hidden" : ""}`}
       onMouseOver={() => setShowActions(true)}
       onMouseOut={() => setShowActions(false)}
     >
@@ -35,7 +44,7 @@ const Call = ({
           <HeaderCall />
 
           {/* // call area like ringing -- Info */}
-          <CallArea name={name} />
+          <CallArea name={name} callAccepted={callAccepted} />
 
           {/* call actions */}
           {showActions ? <CallActions endCall={endCall} /> : null}
@@ -56,7 +65,7 @@ const Call = ({
             </div>
           ) : null}
 
-          {stream ? (
+          {stream && (
             <div>
               <video
                 ref={myVideo}
@@ -65,11 +74,11 @@ const Call = ({
                 autoPlay
                 className={`${toggle ? "largeVideoCall" : "smallVideoCall"} ${
                   showActions ? "moveVideoCall" : ""
-                } `}
+                }`}
                 onClick={() => setToggle((prev) => !prev)}
               ></video>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
 

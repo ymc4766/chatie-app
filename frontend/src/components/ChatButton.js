@@ -16,13 +16,7 @@ import {
 import Ringing from "../ChatScreens/VideoActions/Ringing";
 import { getConversations, updateMessages } from "../redux/chatSlice";
 
-const callData = {
-  socketId: "",
-  receivingCall: false,
-  callEnded: false,
-  name: "",
-  picture: "",
-};
+let callData = {};
 function ChatButton({ socket }) {
   const dispatch = useDispatch();
 
@@ -31,17 +25,26 @@ function ChatButton({ socket }) {
   const { userInfo } = useSelector((state) => state.auth);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [call, setCall] = useState(callData);
+  const [call, setCall] = useState({
+    socketId: "",
+    receivingCall: false, // Corrected property name
+    callEnded: false,
+    name: "",
+    picture: "",
+    signal: "",
+  });
   const [show, setShow] = useState(false);
-  const [stream, setStream] = useState();
+  const [stream, setStream] = useState(null);
   const [callAccepted, setCallAccepted] = useState(false);
   const [isCallActive, setIsCallActive] = useState(false);
   const [showRinging, setShowRinging] = useState(false);
-  const { receivingCall, callEnded, socketId } = call;
+  // const { receivingCall, callEnded, socketId } = call;
 
-  const myVideo = useRef();
-  const userVideo = useRef();
+  const myVideo = useRef({});
+  // console.log("my video  ... ", myVideo);
+  const userVideo = useRef({});
   const connectionRef = useRef();
+  const { receivingCall, callEnded, socketId } = call;
 
   // const { receivingCall, callEnded, socketId } = call;
 
@@ -53,6 +56,7 @@ function ChatButton({ socket }) {
     setModalOpen(false);
   };
   const [typing, setTyping] = useState(false);
+
   useEffect(() => {
     socket.on("get-online-users", (users) => {
       setOnlineUsers(users);
@@ -61,12 +65,14 @@ function ChatButton({ socket }) {
 
     socket.on("typing", (conversation) => setTyping(conversation));
     socket.on("stop typing", () => setTyping(false));
-  }, [dispatch, userInfo]);
+  }, [dispatch]);
+
   useEffect(() => {
-    setUpMedia();
+    setupMedia();
     socket.on("setup socket", (id) => {
       setCall({ ...call, socketId: id });
     });
+
     socket.on("call user", (data) => {
       setCall({
         ...call,
@@ -76,8 +82,6 @@ function ChatButton({ socket }) {
         signal: data.signal,
         receivingCall: true,
       });
-      setShowRinging(true);
-      // setModalOpen(false);
     });
 
     socket.on("end call", () => {
@@ -90,107 +94,90 @@ function ChatButton({ socket }) {
     });
   }, []);
 
+  //call
+
   // call user fn
   const callUser = () => {
-    enableMedia();
-    setCall({
-      ...call,
-      name: getConversationName(userInfo, activeConversation?.users),
-      picture: getConversationPicture(userInfo, activeConversation?.users),
-    });
+    enableMedia(); // Call enableMedia here
+    setCall((prevCall) => ({
+      ...prevCall,
+      name: getConversationName(userInfo, activeConversation.users),
+      picture: getConversationPicture(userInfo, activeConversation.users),
+    }));
     const peer = new Peer({
       initiator: true,
       trickle: false,
       stream: stream,
     });
-
     peer.on("signal", (data) => {
       socket.emit("call user", {
-        userToCall: getConversationId(userInfo, activeConversation?.users),
+        userToCall: getConversationId(userInfo, activeConversation.users),
         signal: data,
         from: socketId,
-        name: userInfo?.name,
-        picture: userInfo?.picture,
+        name: userInfo.name,
+        picture: userInfo.picture,
       });
-
-      peer.on("stream", (stream) => {
-        userVideo.current.srcObject = stream;
-      });
-      peer.on("call accepted", (signal) => {
-        setCallAccepted(true);
-        peer.signal(signal);
-      });
-      connectionRef.current = peer;
     });
-
-    // setIsCallActive(true);
-
-    // setIsChatScreenVisible(false);
+    peer.on("stream", (stream) => {
+      userVideo.current.srcObject = stream;
+    });
+    socket.on("call accepted", (signal) => {
+      setCallAccepted(true);
+      peer.signal(signal);
+    });
+    connectionRef.current = peer;
   };
 
   // Answer call fn
   const answerCall = () => {
     enableMedia();
+
     setCallAccepted(true);
+
     const peer = new Peer({
       initiator: false,
       trickle: false,
       stream: stream,
     });
-
     peer.on("signal", (data) => {
-      socket?.emit("answer call", { signal: data, to: call.socketId });
+      socket.emit("answer call", { signal: data, to: call.socketId });
     });
-
     peer.on("stream", (stream) => {
       userVideo.current.srcObject = stream;
     });
-
     peer.signal(call.signal);
     connectionRef.current = peer;
   };
-
   //--end call  funcion
   const endCall = () => {
     setShow(false);
-    setShowRinging(false);
     setCall({ ...call, callEnded: true, receivingCall: false });
+
     myVideo.current.srcObject = null;
     socket.emit("end call", call.socketId);
     connectionRef?.current?.destroy();
+    // window.location.reload();
   };
-
-  const setUpMedia = async () => {
-    await navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+  const setupMedia = () => {
+    const constraints = {
+      video: true,
+      audio: true,
+    };
+    navigator.mediaDevices
+      .getUserMedia(constraints)
       .then((stream) => {
         setStream(stream);
+      })
+      .catch((error) => {
+        console.error("Error accessing media devices.", error);
       });
   };
 
-  const enableMedia = async () => {
-    try {
-      let currentStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
-      });
-
-      setStream(currentStream);
-      myVideo.current.srcObject = currentStream;
-      setShow(true);
-    } catch (error) {
-      if (
-        error.name === "NotAllowedError" ||
-        error.name === "PermissionDeniedError"
-      ) {
-        // Handle permission denied error
-        console.error("Camera permission denied.");
-      } else {
-        // Handle other errors
-        console.error("Error accessing camera:", error);
-      }
-    }
+  const enableMedia = () => {
+    myVideo.current.srcObject = stream;
+    setShow(true);
   };
+
   //get Conversations
   useEffect(() => {
     if (userInfo?.token) {
@@ -199,49 +186,49 @@ function ChatButton({ socket }) {
   }, [userInfo]);
 
   return (
-    <div>
-      <button className="chat-button" onClick={handleButtonClick}>
-        <BsChat />
-      </button>
-      {isModalOpen && !receivingCall && (
-        <FriendsModal
-          onClose={handleCloseModal}
-          onlineUsers={onlineUsers}
-          typing={typing}
-          call={call}
-          setCall={setCall}
-          callUser={callUser}
-          callAccepted={callAccepted}
-        />
-      )}
+    <>
+      <div>
+        <button className="chat-button" onClick={handleButtonClick}>
+          <BsChat />
+        </button>
+        {isModalOpen && !call.receiveingCall ? (
+          <FriendsModal
+            onClose={handleCloseModal}
+            onlineUsers={onlineUsers}
+            typing={typing}
+            call={call}
+            setCall={setCall}
+            callUser={callUser}
+            callAccepted={callAccepted}
+          />
+        ) : null}
+        <div
+          className={(show || call.signal) && !call.callEnded ? "" : "hidden"}
+        >
+          <Call
+            call={call}
+            setCall={setCall}
+            callAccepted={callAccepted}
+            myVideo={myVideo}
+            userVideo={userVideo}
+            stream={stream}
+            endCall={endCall}
+          />
+        </div>
+        {/* {call.name && ( */}
 
-      {/* {call.name && ( */}
-
-      <div className={(show || call.signal) && !callEnded ? "" : "hidden"}>
-        <Call
-          call={call}
-          setCall={setCall}
-          callAccepted={callAccepted}
-          myVideo={myVideo}
-          userVideo={userVideo}
-          stream={stream}
-          answerCall={answerCall}
-          endCall={endCall}
-        />
-      </div>
-
-      {receivingCall && !callAccepted ? (
-        <div className=" ">
+        {call?.receivingCall && !callAccepted ? (
           <Ringing
+            myVideo={myVideo}
+            userVideo={userVideo}
             call={call}
             setCall={setCall}
             answerCall={answerCall}
             endCall={endCall}
           />
-        </div>
-      ) : null}
-      {/* )} */}
-    </div>
+        ) : null}
+      </div>
+    </>
   );
 }
 

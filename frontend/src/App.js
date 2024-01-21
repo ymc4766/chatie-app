@@ -25,25 +25,18 @@ import UsersScreen from "./screenUser/UsersScreen";
 import Widget from "./screens/Widget";
 import SidebarScreen from "./screens/SidebarScreen";
 
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5500/");
 
 function App() {
   // useEffect(() => {}, [socket]);
-
-  if (typeof process !== "undefined" && process.release.name === "node") {
-    // Server-side code using process
-    console.log("Running in Node.js environment");
-  } else {
-    // Client-side code
-    console.log("Running in browser environment");
-  }
 
   const Layout = () => {
     return (
       <SocketContext.Provider value={socket}>
         <div className=" flex flex-col w-[100%]">
           <>{/* <Navbar /> */}</>
-
+          <Header />
+          <Navigation />
           <div className="flex-1 container mx-auto flex">
             <div className="hidden md:block md:w-1/4 flex-shrink-0 p-4">
               <SidebarScreen />
