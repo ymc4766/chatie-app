@@ -9,11 +9,7 @@ export const doesConversationExist = async (
 ) => {
   if (isGroup === false) {
     let convos = await ConversationModal.find({
-      isGroup: false,
-      $and: [
-        { users: { $elemMatch: { $eq: sender_id } } },
-        { users: { $elemMatch: { $eq: receiver_id } } },
-      ],
+    // Code  here 
     })
       .populate("users", "-password")
       .populate("latestMessage");
@@ -30,17 +26,7 @@ export const doesConversationExist = async (
     return convos[0];
   } else {
     //it's a group chat
-    let convo = await ConversationModal.findById(isGroup)
-      .populate("users admin", "-password")
-      .populate("latestMessage");
-
-    if (!convo)
-      throw createHttpError.BadRequest("Oops...Something went wrong !");
-    //populate message model
-    convo = await User.populate(convo, {
-      path: "latestMessage.sender",
-      select: "name email picture status",
-    });
+    
 
     return convo;
   }
@@ -75,12 +61,7 @@ export const getUserConversations = async (user_id) => {
     .populate("admin", "-password")
     .populate("latestMessage")
     .sort({ updatedAt: -1 })
-    .then(async (results) => {
-      results = await User.populate(results, {
-        path: "latestMessage.sender",
-        select: "name email picture status",
-      });
-      conversations = results;
+   // Code here e....
     })
     .catch((err) => {
       throw createHttpError.BadRequest("Oops...Something went wrong !");
